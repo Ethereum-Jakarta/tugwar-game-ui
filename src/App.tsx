@@ -56,7 +56,7 @@ function App() {
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider>
-          <div className="min-h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-purple-800">
+          <div className="min-h-scree">
             <Header />
             <Container />
           </div>

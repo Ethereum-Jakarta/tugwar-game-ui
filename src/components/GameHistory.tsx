@@ -1,95 +1,182 @@
-import { useState } from "react";
-import { Clock, Trophy, Users, RotateCcw } from "lucide-react";
-import type { GameEvent } from "../types/game";
+"use client"
+
+import { useState } from "react"
+import { Clock, Trophy, Users, RotateCcw, ChevronDown, ChevronRight } from "lucide-react"
+import type { GameEvent } from "../types/game"
 
 interface GameHistoryProps {
-  events: GameEvent[];
+  events: GameEvent[]
 }
 
 const GameHistory = ({ events }: GameHistoryProps) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  
+  const [isExpanded, setIsExpanded] = useState(false)
+
   const getEventIcon = (type: string) => {
     switch (type) {
-      case 'pull': return <Users className="w-4 h-4" />;
-      case 'win': return <Trophy className="w-4 h-4 text-yellow-400" />;
-      case 'reset': return <RotateCcw className="w-4 h-4 text-orange-400" />;
-      default: return <Users className="w-4 h-4" />;
+      case "pull":
+        return <Users className="w-4 h-4" />
+      case "win":
+        return <Trophy className="w-4 h-4" style={{ color: "#836EF9" }} />
+      case "reset":
+        return <RotateCcw className="w-4 h-4" style={{ color: "#A0055D" }} />
+      default:
+        return <Users className="w-4 h-4" />
     }
-  };
+  }
 
   const getEventMessage = (event: GameEvent) => {
     switch (event.type) {
-      case 'pull':
-        return `Team ${event.team} pulled the rope`;
-      case 'win':
-        return `🎉 Team ${event.team} won the game!`;
-      case 'reset':
-        return `🔄 Game was reset`;
+      case "pull":
+        return `Team ${event.team} pulled the rope`
+      case "win":
+        return `Team ${event.team} won the game!`
+      case "reset":
+        return `Game was reset`
       default:
-        return 'Unknown event';
+        return "Unknown event"
     }
-  };
+  }
 
   const getEventColor = (type: string) => {
     switch (type) {
-      case 'pull': return 'bg-blue-900/50 border-blue-600/50';
-      case 'win': return 'bg-yellow-900/50 border-yellow-600/50';
-      case 'reset': return 'bg-orange-900/50 border-orange-600/50';
-      default: return 'bg-gray-900/50 border-gray-600/50';
+      case "pull":
+        return {
+          backgroundColor: "rgba(131, 110, 249, 0.1)",
+          borderColor: "rgba(131, 110, 249, 0.2)",
+          hoverBg: "rgba(131, 110, 249, 0.2)",
+        }
+      case "win":
+        return {
+          backgroundColor: "rgba(131, 110, 249, 0.15)",
+          borderColor: "rgba(131, 110, 249, 0.3)",
+          hoverBg: "rgba(131, 110, 249, 0.25)",
+        }
+      case "reset":
+        return {
+          backgroundColor: "rgba(160, 5, 93, 0.1)",
+          borderColor: "rgba(160, 5, 93, 0.2)",
+          hoverBg: "rgba(160, 5, 93, 0.2)",
+        }
+      default:
+        return {
+          backgroundColor: "rgba(14, 16, 15, 0.3)",
+          borderColor: "rgba(251, 250, 249, 0.1)",
+          hoverBg: "rgba(14, 16, 15, 0.5)",
+        }
     }
-  };
+  }
+
+  const getTeamColor = (team?: number) => {
+    if (team === 1) return "#836EF9"
+    if (team === 2) return "#A0055D"
+    return "rgba(251, 250, 249, 0.6)"
+  }
 
   return (
-    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
-      <div 
-        className="flex items-center justify-between cursor-pointer hover:bg-white/5 rounded-lg p-2 -m-2 transition-colors"
+    <div className="glass rounded-2xl p-8 card-hover border border-white/10">
+      <button
+        className="w-full flex items-center justify-between hover:bg-white/5 rounded-xl p-3 -m-3 transition-all duration-200"
         onClick={() => setIsExpanded(!isExpanded)}
       >
-        <h3 className="text-xl font-bold text-white flex items-center">
-          <Clock className="w-5 h-5 mr-2" />
-          Game History ({events.length})
+        <h3 className="text-2xl font-bold flex items-center" style={{ color: "#FBFAF9" }}>
+          <Clock className="w-6 h-6 mr-3" style={{ color: "#836EF9" }} />
+          Game History
+          <span
+            className="ml-3 text-lg px-3 py-1 rounded-full border font-medium"
+            style={{
+              backgroundColor: "rgba(14, 16, 15, 0.5)",
+              color: "#FBFAF9",
+              borderColor: "rgba(251, 250, 249, 0.2)",
+            }}
+          >
+            {events.length}
+          </span>
         </h3>
-        <div className="text-white text-xl">
-          {isExpanded ? '▼' : '▶'}
+        <div className="transition-transform duration-200" style={{ color: "rgba(251, 250, 249, 0.6)" }}>
+          {isExpanded ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
         </div>
-      </div>
-      
+      </button>
+
       {isExpanded && (
-        <div className="mt-4 space-y-2 max-h-60 overflow-y-auto">
+        <div className="mt-6">
           {events.length === 0 ? (
-            <div className="text-center py-8">
-              <div className="text-4xl mb-2">🎮</div>
-              <p className="text-gray-400">No events yet</p>
-              <p className="text-gray-500 text-sm">Start pulling to see game history!</p>
+            <div className="text-center py-12">
+              <div className="text-6xl mb-4 float-animation">🎮</div>
+              <h4 className="text-xl font-semibold mb-2" style={{ color: "#FBFAF9" }}>
+                No events yet
+              </h4>
+              <p style={{ color: "rgba(251, 250, 249, 0.6)" }}>Start pulling to see the battle unfold!</p>
             </div>
           ) : (
-            events.slice().reverse().map((event, index) => (
-              <div 
-                key={index} 
-                className={`flex items-center space-x-3 p-3 rounded-lg border transition-all duration-200 hover:scale-[1.02] ${getEventColor(event.type)}`}
-              >
-                <div className="text-gray-300">
-                  {getEventIcon(event.type)}
-                </div>
-                <div className="flex-1">
-                  <p className="text-white text-sm font-medium">{getEventMessage(event)}</p>
-                  <p className="text-gray-400 text-xs">
-                    {new Date(event.timestamp).toLocaleTimeString()}
-                  </p>
-                </div>
-                {event.player && (
-                  <div className="text-xs text-gray-400 font-mono max-w-20 truncate">
-                    {event.player.slice(0, 6)}...{event.player.slice(-4)}
-                  </div>
-                )}
-              </div>
-            ))
+            <div className="space-y-3 max-h-80 overflow-y-auto pr-2">
+              {events
+                .slice()
+                .reverse()
+                .map((event, index) => {
+                  const colors = getEventColor(event.type)
+                  return (
+                    <div
+                      key={index}
+                      className="flex items-center space-x-4 p-4 rounded-xl border transition-all duration-200 hover:scale-[1.01]"
+                      style={{
+                        backgroundColor: colors.backgroundColor,
+                        borderColor: colors.borderColor,
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = colors.hoverBg
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = colors.backgroundColor
+                      }}
+                    >
+                      <div
+                        className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center border"
+                        style={{
+                          backgroundColor: "rgba(14, 16, 15, 0.5)",
+                          borderColor: "rgba(251, 250, 249, 0.2)",
+                        }}
+                      >
+                        {getEventIcon(event.type)}
+                      </div>
+
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium" style={{ color: getTeamColor(event.team) }}>
+                          {getEventMessage(event)}
+                        </p>
+                        <p className="text-sm" style={{ color: "rgba(251, 250, 249, 0.5)" }}>
+                          {new Date(event.timestamp).toLocaleTimeString()}
+                        </p>
+                      </div>
+
+                      {event.player && (
+                        <div className="flex-shrink-0">
+                          <div
+                            className="text-xs font-mono px-2 py-1 rounded border"
+                            style={{
+                              backgroundColor: "rgba(14, 16, 15, 0.5)",
+                              color: "rgba(251, 250, 249, 0.6)",
+                              borderColor: "rgba(251, 250, 249, 0.2)",
+                            }}
+                          >
+                            {event.player.slice(0, 6)}...{event.player.slice(-4)}
+                          </div>
+                        </div>
+                      )}
+
+                      {event.type === "win" && (
+                        <div className="flex-shrink-0">
+                          <span className="text-2xl">🏆</span>
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
+            </div>
           )}
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default GameHistory;
+export default GameHistory
