@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+body {
+  font-family: "Inter", sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+@keyframes rope-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+}
+
+.rope-shake {
+  animation: rope-shake 0.3s ease-in-out;
+}
+
+@keyframes victory-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.victory-pulse {
+  animation: victory-pulse 0.8s ease-in-out infinite;
+}
